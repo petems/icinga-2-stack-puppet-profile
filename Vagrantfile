@@ -18,7 +18,7 @@ Vagrant.configure(2) do |config|
     yum install -y ruby
   SHELL
 
-  Use r10k to download modules
+  # Use r10k to download modules
   config.vm.provision "shell", inline: <<-SHELL
     yum install -y epel-release git
     gem install r10k --no-ri --no-rdoc
