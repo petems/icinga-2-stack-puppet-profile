@@ -32,20 +32,9 @@ class role::monitoring_server {
     db_name                       => 'icinga2_data',
     db_user                       => 'icinga2',
     db_pass                       => $icinga_db_password,
+    manage_database               => true,
     install_plugins               => true,
     install_mailutils             => false,
-  }
-
-  icinga2::object::idomysqlconnection { 'mysql_connection':
-    target_dir       => '/etc/icinga2/features-enabled',
-    target_file_name => 'ido-mysql.conf',
-    host             => '127.0.0.1',
-    port             => '3306',
-    user             => 'icinga2',
-    password         => $icinga_db_password,
-    database         => 'icinga2_data',
-    categories       => ['DbCatConfig', 'DbCatState', 'DbCatAcknowledgement',
-                         'DbCatComment', 'DbCatDowntime', 'DbCatEventHandler' ],
   }
 
   icinga2::object::hostgroup { 'linux_servers': }
@@ -107,10 +96,6 @@ class role::monitoring_server {
     $sql_schema_location = '/usr/share/icingaweb2/etc/schema/mysql.schema.sql'
   } else {
     $sql_schema_location = '/usr/share/doc/icingaweb2/schema/mysql.schema.sql'
-  }
-
-  package { 'icinga2-ido-mysql':
-    ensure => installed,
   }
 
   class {'::icingaweb2':
