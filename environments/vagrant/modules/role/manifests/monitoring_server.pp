@@ -37,51 +37,11 @@ class role::monitoring_server {
     install_mailutils             => false,
   }
 
-  icinga2::object::hostgroup { 'linux_servers': }
+  icinga2::object::hostgroup { 'Linux Servers': }
   Icinga2::Object::Host <<| |>>
 
-  icinga2::object::apply_service { 'check_load':
-    display_name   => 'Load from nrpe',
-    check_command  => 'nrpe',
-    vars           => {
-                        nrpe_command => 'check_load',
-                      },
-    assign_where   => '"linux_servers" in host.groups',
-    ignore_where   => 'host.name == "localhost"',
-    target_dir     => '/etc/icinga2/objects/applys'
-  }
-
-  icinga2::object::apply_service { 'check_swap':
-    display_name   => 'Swap from nrpe',
-    check_command  => 'nrpe',
-    vars           => {
-                        nrpe_command => 'check_swap',
-                      },
-    assign_where   => '"linux_servers" in host.groups',
-    ignore_where   => 'host.name == "localhost"',
-    target_dir     => '/etc/icinga2/objects/applys'
-  }
-
-  icinga2::object::apply_service { 'check_disk':
-    display_name   => 'Disk from nrpe',
-    check_command  => 'nrpe',
-    vars           => {
-                        nrpe_command => 'check_disk',
-                      },
-    assign_where   => '"linux_servers" in host.groups',
-    ignore_where   => 'host.name == "localhost"',
-    target_dir     => '/etc/icinga2/objects/applys'
-  }
-
-  icinga2::object::apply_service { 'check_hpacucli':
-    display_name   => 'hpacucli from nrpe',
-    check_command  => 'nrpe',
-    vars           => {
-                        nrpe_command => 'check_hpacucli',
-                      },
-    assign_where   => '"linux_servers" in host.groups',
-    ignore_where   => 'regex("(localhost|compute0(4|5))", host.name)',
-    target_dir     => '/etc/icinga2/objects/applys'
+  package { 'icingacli':
+    ensure => installed,
   }
 
   package { 'nrpe':
@@ -99,7 +59,9 @@ class role::monitoring_server {
     ido_db_user         => 'icinga2',
     web_db_pass         => $icingaweb2_db_password,
     manage_apache_vhost => true,
-    initialize          => true,
+    install_method      => 'package',
+    config_dir_recurse  => true,
+    require             => Package['icingacli'],
   }
 
   class {'::icingaweb2::mod::monitoring':}
@@ -109,5 +71,16 @@ class role::monitoring_server {
     line => 'date.timezone=UTC',
     match => '^.*date.timezone=.*',
   }
+
+  exec { 'ln -s /usr/share/icingaweb2/modules/setup /etc/icingaweb2/enabledModules/':
+    creates => '/etc/icingaweb2/enabledModules/setup/',
+    require => Class['::icingaweb2'],
+  }
+
+  exec { 'icingacli setup token create':
+    creates => '/etc/icingaweb2/setup.token',
+    require => Class['::icingaweb2'],
+  }
+
 
 }

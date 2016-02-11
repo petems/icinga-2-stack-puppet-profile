@@ -8,8 +8,7 @@ mod 'icinga-icinga2',
 
 mod 'icinga-icingaweb2',
   :git => 'https://github.com/petems/puppet-icingaweb2',
-  :ref => '96211d89d1b9c42491170c45255d1cc8e41c17db'
-  # Awaiting https://github.com/Icinga/puppet-icingaweb2/pull/29
+  :ref => '3bd4b6e52d4a04fab1c26df34e9b1fb016a99a70'
 
 mod 'puppetlabs-stdlib'
 mod 'puppetlabs-concat'

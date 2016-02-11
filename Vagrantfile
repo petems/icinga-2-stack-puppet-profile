@@ -35,7 +35,8 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: <<-SHELL
     service iptables stop # Could do this with Puppet, but feeling lazy
     echo "icingaweb2 is running at http://`facter ipaddress`/icingaweb2/"
-    echo "Username and password: icingaadmin:icinga"
+    echo "Set it up with http://`facter ipaddress`/icingaweb2/setup/"
+    echo "Token is `cat /etc/icingaweb2/setup.token`"
   SHELL
 
 end
