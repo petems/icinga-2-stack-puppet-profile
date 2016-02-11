@@ -92,12 +92,6 @@ class role::monitoring_server {
     ensure => installed,
   }
 
-  if $::icingaweb2::install_method == 'git' {
-    $sql_schema_location = '/usr/share/icingaweb2/etc/schema/mysql.schema.sql'
-  } else {
-    $sql_schema_location = '/usr/share/doc/icingaweb2/schema/mysql.schema.sql'
-  }
-
   class {'::icingaweb2':
     admin_users         => 'data',
     ido_db_name         => 'icinga2_data',
